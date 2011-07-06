@@ -1,0 +1,20 @@
+{
+  "author": "Felix Geisendörfer <felix@debuggable.com> (http://debuggable.com/)",
+  "name": "fast-or-slow",
+  "description": "Are your tests fast or slow? A pragmatic testing framework.",
+  "version": "0.0.0",
+  "homepage": "https://github.com/felixge/node-fast-or-slow",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/felixge/node-fast-or-slow.git"
+  },
+  "main": "./index",
+  "scripts": {
+    "test": "make test"
+  },
+  "engines": {
+    "node": "*"
+  },
+  "dependencies": {},
+  "devDependencies": {}
+}
