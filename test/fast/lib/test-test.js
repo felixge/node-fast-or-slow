@@ -119,7 +119,7 @@ test(function asyncTimeout() {
   Sandbox.globals.setTimeout = setTimeout;
   Sandbox.globals.Date = Date;
   testInstance.fn = function(done) {};
-  testInstance.timeout = 100;
+  var timeout = testInstance.timeout = 100;
 
   var runCb = sinon.spy();
   testInstance.run(runCb);
@@ -129,7 +129,7 @@ test(function asyncTimeout() {
   clock.tick(1);
   var doneErr = runCb.args[0][0];
   assert.ok(doneErr.message.match(/timeout/));
-  assert.ok(doneErr.message.indexOf('than ' + testInstance.timeout + 'ms') > -1);
+  assert.ok(doneErr.message.indexOf('than ' + timeout + 'ms') > -1);
   assert.ok(doneErr.message.indexOf('took 100ms') > -1);
 
   clock.restore()
@@ -140,7 +140,7 @@ test(function asyncTimeout() {
 test(function syncTimeout() {
   testInstance.fn = function() {
   };
-  testInstance.timeout = -1;
+  var timeout = testInstance.timeout = -1;
 
   var runCb = sinon.spy();
   testInstance.run(runCb);
@@ -148,7 +148,7 @@ test(function syncTimeout() {
   assert.strictEqual(runCb.called, true);
   var doneErr = runCb.args[0][0];
   assert.ok(doneErr.message.match(/timeout/));
-  assert.ok(doneErr.message.indexOf('than ' + testInstance.timeout + 'ms') > -1);
+  assert.ok(doneErr.message.indexOf('than ' + timeout + 'ms') > -1);
 });
 
 test(function alterTimeout() {
