@@ -7,12 +7,11 @@ var TestCase = Sandbox.exports;
 
 var testCase;
 function test(fn) {
-  var testCase = new TestCase();
+  testCase = new TestCase();
   fn();
 }
 
 test(function addOneTest() {
-  var testCase = new TestCase();
   var testName = 'my test';
   var testFn = function() {};
 
@@ -25,8 +24,6 @@ test(function addOneTest() {
 });
 
 test(function addMultipleTests() {
-  var testCase = new TestCase();
-
   testCase.add('a', function(){});
   testCase.add('b', function(){});
   testCase.add('c', function(){});
@@ -35,7 +32,6 @@ test(function addMultipleTests() {
 });
 
 test(function addTestWithOptions() {
-  var testCase = new TestCase();
   var testName = 'my test';
   var testOptions = {foo: 'bar'};
   var testFn = function() {};
