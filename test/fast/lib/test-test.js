@@ -17,7 +17,24 @@ function test(fn) {
   fn();
 }
 
-test(function constructor() {
+test(function addOneTest() {
+  var testName = 'my test';
+  var testFn = function() {};
+
+  var testInstance = Test.create(testName, testFn);
+
+  assert.strictEqual(testInstance.name, testName);
+  assert.strictEqual(testInstance.fn, testFn);
+});
+
+test(function addTestWithOptions() {
+  var testName = 'my test';
+  var testOptions = {foo: 'bar'};
+  var testFn = function() {};
+
+  var testInstance = Test.create(testName, testOptions, testFn);
+
+  assert.strictEqual(testInstance.foo, testOptions.foo);
 });
 
 test(function runEmptyTest() {

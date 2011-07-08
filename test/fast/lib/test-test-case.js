@@ -11,33 +11,32 @@ function test(fn) {
   fn();
 }
 
-test(function addOneTest() {
-  var testName = 'my test';
-  var testFn = function() {};
+test(function add() {
+  var testA = {test: 'A'};
+  testCase.add(testA);
+  assert.equal(testCase._tests.length, 1);
+  assert.strictEqual(testCase._tests[0], testA);
 
-  testCase.add(testName, testFn);
-
-  var registeredTests = testCase._tests;
-  assert.strictEqual(registeredTests.length, 1);
-  assert.strictEqual(registeredTests[0].name, testName);
-  assert.strictEqual(registeredTests[0].fn, testFn);
+  var testB = {test: 'B'};
+  testCase.add(testB);
+  assert.equal(testCase._tests.length, 2);
+  assert.strictEqual(testCase._tests[1], testB);
 });
 
-test(function addMultipleTests() {
-  testCase.add('a', function(){});
-  testCase.add('b', function(){});
-  testCase.add('c', function(){});
+test(function runNoTestCases() {
+  var runCb = sinon.spy();
+  testCase.run(runCb);
 
-  assert.strictEqual(testCase._tests.length, 3);
+  assert.ok(runCb.called);
+  var runErr = runCb.args[0][0];
+  assert.equal(runErr, null);
 });
 
-test(function addTestWithOptions() {
-  var testName = 'my test';
-  var testOptions = {foo: 'bar'};
-  var testFn = function() {};
+test(function runOneSuccessCase() {
+  //var runCb = sinon.spy();
+  //testCase.run(runCb);
 
-  testCase.add(testName, testOptions, testFn);
-
-  var registeredTests = testCase._tests;
-  assert.strictEqual(registeredTests[0].foo, testOptions.foo);
+  //assert.ok(runCb.called);
+  //var runErr = runCb.args[0][0];
+  //assert.equal(runErr, null);
 });
