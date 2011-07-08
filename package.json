@@ -1,7 +1,7 @@
 {
   "author": "Felix Geisendörfer <felix@debuggable.com> (http://debuggable.com/)",
   "name": "fast-or-slow",
-  "description": "Are your tests fast or slow? A pragmatic testing framework.",
+  "description": "Are your tests fast or slow? An opinionated testing framework.",
   "version": "0.0.0",
   "homepage": "https://github.com/felixge/node-fast-or-slow",
   "repository": {
@@ -15,6 +15,10 @@
   "engines": {
     "node": "*"
   },
-  "dependencies": {},
+  "dependencies": {
+    "sinon": "https://github.com/cjohansen/Sinon.JS/tarball/90b4af9bbf0273bfc8a54da998272cfd83f00407",
+    "sandboxed-module": "0.1.0",
+    "hashish": "0.0.3"
+  },
   "devDependencies": {}
 }
