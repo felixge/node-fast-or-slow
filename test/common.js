@@ -8,11 +8,11 @@ exports.dir = {
 };
 
 var sandboxedModules = [];
-exports.lib = function(moduleId, options) {
+exports.sandbox = function(moduleId, options) {
   moduleId = path.join(exports.dir.lib, moduleId);
   var sandboxedModule = SandboxeModule.load(moduleId, options);
   sandboxedModules.push(sandboxedModule);
-  return sandboxedModule.exports;
+  return sandboxedModule;
 };
 
 process.on('exit', function() {
