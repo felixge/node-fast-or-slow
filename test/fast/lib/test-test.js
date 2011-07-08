@@ -27,9 +27,10 @@ test(function runEmptyTest() {
   testInstance.run(runCb);
 
   assert.ok(testInstance.fn.called);
-  assert.strictEqual(runCb.args[0][0], null);
+  var doneErr = runCb.args[0][0];
+  assert.ok(!doneErr);
 
-  assert.ok(testInstance._done);
+  assert.ok(testInstance._ended);
 });
 
 test(function runSyncException() {
@@ -60,7 +61,7 @@ test(function runAsyncTest() {
   assert.ok(!runCb.called);
   clock.tick(1);
   assert.ok(runCb.called);
-  assert.ok(testInstance._done);
+  assert.ok(testInstance._ended);
 
   clock.restore();
 });
@@ -136,4 +137,18 @@ test(function asyncTimeout() {
   clock.restore()
   Sandbox.globals.setTimeout = setTimeout;
   Sandbox.globals.Date = Date;
+});
+
+test(function syncTimeout() {
+  testInstance.fn = function() {
+  };
+  testInstance.timeout = -1;
+
+  var runCb = sinon.spy();
+  testInstance.run(runCb);
+
+  assert.strictEqual(runCb.called, true);
+  var doneErr = runCb.args[0][0];
+  assert.ok(doneErr.message.match(/timeout/));
+  assert.ok(doneErr.message.indexOf('than ' + testInstance.timeout + 'ms') > -1);
 });
