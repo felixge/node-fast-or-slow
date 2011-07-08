@@ -2,7 +2,8 @@ var common = require('../common');
 var sinon = require('sinon');
 var assert = require('assert');
 
-var TestCase = common.lib('test_case');
+var Sandbox = common.sandbox('test_case');
+var TestCase = Sandbox.exports;
 
 var testCase;
 function test(fn) {
