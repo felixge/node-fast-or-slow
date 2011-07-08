@@ -59,6 +59,7 @@ test(function runSyncException() {
   testInstance.run(runCb);
 
   assert.ok(testInstance.fn.called);
+  assert.strictEqual(testInstance.error, err);
   assert.strictEqual(runCb.args[0][0], err);
 });
 

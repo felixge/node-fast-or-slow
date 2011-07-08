@@ -14,13 +14,13 @@ function test(fn) {
 test(function add() {
   var testA = {test: 'A'};
   testCase.add(testA);
-  assert.equal(testCase._tests.length, 1);
-  assert.strictEqual(testCase._tests[0], testA);
+  assert.equal(testCase.tests.length, 1);
+  assert.strictEqual(testCase.tests[0], testA);
 
   var testB = {test: 'B'};
   testCase.add(testB);
-  assert.equal(testCase._tests.length, 2);
-  assert.strictEqual(testCase._tests[1], testB);
+  assert.equal(testCase.tests.length, 2);
+  assert.strictEqual(testCase.tests[1], testB);
 });
 
 test(function runNoTestCases() {
@@ -28,15 +28,30 @@ test(function runNoTestCases() {
   testCase.run(runCb);
 
   assert.ok(runCb.called);
-  var runErr = runCb.args[0][0];
-  assert.equal(runErr, null);
+  assert.ok(runCb.calledWith(null));
 });
 
-test(function runOneSuccessCase() {
-  //var runCb = sinon.spy();
-  //testCase.run(runCb);
+test(function runOneSuccessTest() {
+  var testInstance = {};
+  testInstance.run = sinon.stub().yields(null);
 
-  //assert.ok(runCb.called);
-  //var runErr = runCb.args[0][0];
-  //assert.equal(runErr, null);
+  testCase.add(testInstance);
+
+  var runCb = sinon.spy();
+  testCase.run(runCb);
+
+  assert.ok(runCb.calledWith(null));
+});
+
+test(function ronOneErrorTest() {
+  var err = new Error('something went wrong');
+  var testInstance = {};
+  testInstance.run = sinon.stub().yields(err);
+
+  testCase.add(testInstance);
+
+  var runCb = sinon.spy();
+  testCase.run(runCb);
+
+  assert.ok(runCb.calledWith([err]));
 });
