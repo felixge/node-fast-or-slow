@@ -176,3 +176,46 @@ test(function alterTimeout() {
   Sandbox.globals.clearTimeout = clearTimeout;
   Sandbox.globals.Date = Date;
 });
+
+test(function clearsAysyncTimeoutOnSuccess() {
+  var realClearTimeout = clearTimeout;
+  var timeoutId = 23;
+
+  Sandbox.globals.setTimeout = sinon.stub().returns(timeoutId);
+  Sandbox.globals.clearTimeout = sinon.stub();
+
+  testInstance.fn = function(done) {
+    done();
+  };
+  testInstance.timeout = 100;
+
+  var runCb = sinon.spy();
+  testInstance.run(runCb);
+
+  assert.ok(runCb.called);
+  assert.ok(Sandbox.globals.clearTimeout.calledWith(timeoutId));
+
+  Sandbox.globals.clearTimeout = realClearTimeout;
+});
+
+test(function cancelTimeout() {
+  var clock = sinon.useFakeTimers();;
+
+  Sandbox.globals.setTimeout = setTimeout;
+  Sandbox.globals.Date = Date;
+  testInstance.fn = function(done) {};
+  testInstance.timeout = 100;
+
+  var runCb = sinon.spy();
+  testInstance.run(runCb);
+
+  testInstance.setTimeout(0);
+
+  clock.tick(100);
+  var doneErr = runCb.args[0][0];
+  assert.ok(!doneErr);
+
+  clock.restore()
+  Sandbox.globals.setTimeout = setTimeout;
+  Sandbox.globals.Date = Date;
+});
