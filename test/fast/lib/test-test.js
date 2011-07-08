@@ -202,6 +202,7 @@ test(function cancelTimeout() {
   var clock = sinon.useFakeTimers();;
 
   Sandbox.globals.setTimeout = setTimeout;
+  Sandbox.globals.clearTimeout = clearTimeout;
   Sandbox.globals.Date = Date;
   testInstance.fn = function(done) {};
   testInstance.timeout = 100;
@@ -212,10 +213,15 @@ test(function cancelTimeout() {
   testInstance.setTimeout(0);
 
   clock.tick(100);
+  assert.ok(!testInstance._ended);
+
+  testInstance.doneCb()();
+  assert.ok(testInstance._ended);
   var doneErr = runCb.args[0][0];
   assert.ok(!doneErr);
 
   clock.restore()
   Sandbox.globals.setTimeout = setTimeout;
+  Sandbox.globals.clearTimeout = clearTimeout;
   Sandbox.globals.Date = Date;
 });
