@@ -11,16 +11,97 @@ function test(fn) {
   fn();
 }
 
-test(function add() {
-  var testA = {test: 'A'};
-  testCase.add(testA);
-  assert.equal(testCase.tests.length, 1);
-  assert.strictEqual(testCase.tests[0], testA);
+test(function createFactory() {
+  var testCase = TestCase.create(10);
+  assert.strictEqual(testCase.testTimeout, 10);
+});
 
-  var testB = {test: 'B'};
-  testCase.add(testB);
-  assert.equal(testCase.tests.length, 2);
-  assert.strictEqual(testCase.tests[1], testB);
+test(function sugarAddTestFunction() {
+  var sugarAddTest = testCase.sugarAddTest();
+
+  Object
+    .keys(TestCase.prototype)
+    .concat(Object.keys(testCase))
+    .forEach(function(property) {
+      if (typeof testCase[property] !== 'function') {
+        assert.strictEqual(sugarAddTest[property], testCase[property]);
+        return;
+      }
+
+      var returns = 'the answer';
+      var args = [1, 2, 3];
+      testCase[property] = sinon.stub().returns(returns);
+      var r = sugarAddTest[property].apply(null, args);
+
+      assert.strictEqual(returns, r);
+      assert.ok(testCase[property].calledOn(testCase));
+      assert.ok(testCase[property].calledWith(1, 2, 3));
+      assert.ok(testCase[property].callCount, 1);
+    });
+
+  var returns = 'another answer';
+  var args = [1, 2];
+  testCase.addTest = sinon.stub().returns(returns);
+  var r = sugarAddTest.apply(null, args);
+
+  assert.strictEqual(r, returns);
+  assert.ok(testCase.addTest.calledOn(testCase));
+  assert.ok(testCase.addTest.calledWith(1, 2));
+  assert.ok(testCase.addTest.callCount, 1);
+});
+
+test(function addTestWithNameAndFn() {
+  var testName = 'my test';
+  var testFn = function() {};
+  testCase.addTest(testName, testFn);
+
+  assert.equal(testCase.tests.length, 1);
+  assert.equal(testCase.tests[0].name, testName);
+  assert.equal(testCase.tests[0].fn, testFn);
+  assert.equal(testCase.tests[0].timeout, null);
+});
+
+test(function addTestWithOptions() {
+  var testName = 'my test';
+  var testFn = function() {};
+  var options = {foo: 'bar'};
+  testCase.addTest(testName, options, testFn);
+
+  assert.equal(testCase.tests[0].name, testName);
+  assert.equal(testCase.tests[0].fn, testFn);
+  assert.equal(testCase.tests[0].foo, options.foo);
+});
+
+test(function addTestWithTestTimeout() {
+  testCase.testTimeout = 20;
+
+  var testName = 'my test';
+  var testFn = function() {};
+  testCase.addTest(testName, testFn);
+
+  assert.equal(testCase.tests[0].timeout, 20);
+});
+
+test(function addTestWithTestTimeoutAndOptions() {
+  testCase.testTimeout = 20;
+
+  var testName = 'my test';
+  var testFn = function() {};
+  var testOptions = {};
+  testCase.addTest(testName, testOptions, testFn);
+
+  assert.equal(testCase.tests[0].timeout, 20);
+});
+
+test(function addTestWithTestTimeoutAndTimeoutOption() {
+  testCase.testTimeout = 20;
+
+  var testName = 'my test';
+  var testFn = function() {};
+  var testOptions = {timeout: 50};
+  testCase.addTest(testName, testOptions, testFn);
+
+  assert.equal(testCase.tests[0].timeout, 50);
 });
 
 test(function runNoTestCases() {
@@ -36,7 +117,7 @@ test(function runNoTestCases() {
 test(function runOneSuccessTest() {
   var testInstance = {};
   testInstance.run = sinon.stub().yields(null);
-  testCase.add(testInstance);
+  testCase.tests.push(testInstance);
 
   testCase.duration = sinon.stub().returns(25);
 
@@ -50,7 +131,7 @@ test(function runOneErrorTest() {
   var err = new Error('something went wrong');
   var testInstance = {};
   testInstance.run = sinon.stub().yields(err);
-  testCase.add(testInstance);
+  testCase.tests.push(testInstance);
 
   testCase.duration = sinon.stub().returns(10);
 
@@ -65,11 +146,11 @@ test(function runOneSuccessAndOneErrorTest() {
 
   var errorTest = {};
   errorTest.run = sinon.stub().yields(err);
-  testCase.add(errorTest);
+  testCase.tests.push(errorTest);
 
   var successTest = {};
   successTest.run = sinon.stub().yields(null);
-  testCase.add(successTest);
+  testCase.tests.push(successTest);
 
   testCase.duration = sinon.stub().returns(5);
 
