@@ -119,12 +119,10 @@ test(function runOneSuccessTest() {
   testInstance.run = sinon.stub().yields(null);
   testCase.tests.push(testInstance);
 
-  testCase.duration = sinon.stub().returns(25);
-
   var runCb = sinon.spy();
   testCase.run(runCb);
 
-  assert.ok(runCb.calledWith(null, {pass: 1, fail: 0, total: 1, duration: 25}));
+  assert.ok(runCb.calledWith(null));
 });
 
 test(function runOneErrorTest() {
@@ -133,12 +131,10 @@ test(function runOneErrorTest() {
   testInstance.run = sinon.stub().yields(err);
   testCase.tests.push(testInstance);
 
-  testCase.duration = sinon.stub().returns(10);
-
   var runCb = sinon.spy();
   testCase.run(runCb);
 
-  assert.ok(runCb.calledWith([err], {pass: 0, fail: 1, total: 1, duration: 10}));
+  assert.ok(runCb.calledWith([err]));
 });
 
 test(function runOneSuccessAndOneErrorTest() {
@@ -152,23 +148,10 @@ test(function runOneSuccessAndOneErrorTest() {
   successTest.run = sinon.stub().yields(null);
   testCase.tests.push(successTest);
 
-  testCase.duration = sinon.stub().returns(5);
-
   var runCb = sinon.spy();
   testCase.run(runCb);
 
-  assert.ok(runCb.calledWith([err], {pass: 1, fail: 1, total: 2, duration: 5}));
-});
-
-test(function statsWhileStillRunning() {
-  testCase.tests = [1, 2, 3];
-  testCase.index = 1;
-  testCase.errors = ['a'];
-
-  testCase.duration = sinon.stub().returns(3);
-
-  var stats = testCase.stats();
-  assert.deepEqual(stats, {fail: 1, pass: 0, total: 3, duration: 3});
+  assert.ok(runCb.calledWith([err]));
 });
 
 test(function duration() {
@@ -182,4 +165,27 @@ test(function durationBeforeEnded() {
   testCase._started = +new Date;
   assert.ok(testCase.duration() >= 0);
   assert.ok(testCase.duration() < 10);
+});
+
+test(function statsNumbers() {
+  testCase.tests = {length: 5};
+  testCase.errors = {length: 3};
+  testCase.index = 4;
+
+  var stats = testCase.stats();
+  assert.strictEqual(stats.pass, 1);
+  assert.strictEqual(stats.fail, 3);
+  assert.strictEqual(stats.executed, testCase.index);
+  assert.strictEqual(stats.total, 5);
+});
+
+test(function statsExitCode() {
+  assert.strictEqual(testCase.stats().exitCode, 0);
+
+  testCase.errors = {length: 3};
+  assert.strictEqual(testCase.stats().exitCode, 1);
+});
+
+test(function endWithoutCb() {
+  testCase.end();
 });
