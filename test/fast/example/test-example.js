@@ -19,3 +19,12 @@ test('V8 is fast', function() {
 
   assert.equal(i, countTo);
 });
+
+process.on('exit', function(exitCode) {
+  var stats = test.stats();
+  assert.equal(stats.fail, 1);
+  assert.equal(stats.pass, 2);
+  assert.equal(exitCode, 1);
+
+  process.reallyExit(0);
+});

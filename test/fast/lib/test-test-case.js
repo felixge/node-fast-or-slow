@@ -179,13 +179,14 @@ test(function statsNumbers() {
   assert.strictEqual(stats.total, 5);
 });
 
-test(function statsExitCode() {
-  assert.strictEqual(testCase.stats().exitCode, 0);
-
-  testCase.errors = {length: 3};
-  assert.strictEqual(testCase.stats().exitCode, 1);
-});
-
 test(function endWithoutCb() {
   testCase.end();
+});
+
+test(function endEmitsEvent() {
+  var endCb = sinon.spy();
+  testCase.on('end', endCb);
+  testCase.end();
+
+  assert.ok(endCb.called);
 });
