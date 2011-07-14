@@ -2,6 +2,7 @@ var common = require('../common');
 var assert = require('assert');
 var sinon = require('sinon');
 var EventEmitter = require('events').EventEmitter;
+var stackTrace = require('stack-trace');
 
 var sandboxProcess = new EventEmitter();
 var Sandbox = common.sandbox('test', {
@@ -25,6 +26,7 @@ test(function addOneTest() {
 
   assert.strictEqual(testInstance.name, testName);
   assert.strictEqual(testInstance.fn, testFn);
+  assert.ok(testInstance._createTrace);
 });
 
 test(function addTestWithOptions() {
@@ -146,7 +148,8 @@ test(function asyncTimeout() {
   assert.strictEqual(runCb.called, false);
   clock.tick(1);
   var doneErr = runCb.args[0][0];
-  assert.ok(doneErr.message.match(/timeout/));
+  assert.ok(doneErr.timeout);
+  assert.ok(doneErr.message.match(/timeout/i));
   assert.ok(doneErr.message.indexOf('than ' + timeout + 'ms') > -1);
   assert.ok(doneErr.message.indexOf('took 100ms') > -1);
 
@@ -165,7 +168,7 @@ test(function syncTimeout() {
 
   assert.strictEqual(runCb.called, true);
   var doneErr = runCb.args[0][0];
-  assert.ok(doneErr.message.match(/timeout/));
+  assert.ok(doneErr.message.match(/timeout/i));
   assert.ok(doneErr.message.indexOf('than ' + timeout + 'ms') > -1);
 });
 
@@ -242,4 +245,55 @@ test(function cancelTimeout() {
   Sandbox.globals.setTimeout = setTimeout;
   Sandbox.globals.clearTimeout = clearTimeout;
   Sandbox.globals.Date = Date;
+});
+
+//test(function getLine() {
+
+//});
+
+test(function getFile() {
+  var expectedCallSite = {getFileName: sinon.stub().returns(common.dir.root + '/test/super.js')};
+  testInstance._trace = [
+    {getFileName: sinon.stub().returns(common.dir.lib + '/foo.js')},
+    {getFileName: sinon.stub().returns(common.dir.lib + '/me.js')},
+    expectedCallSite,
+    {getFileName: sinon.stub().returns('you went too far!')},
+  ];
+
+  var callSite = testInstance.getCallSite();
+  assert.strictEqual(callSite, expectedCallSite);
+});
+
+test(function addTraceInfoForTimeout() {
+  var file = __dirname + '/imaginary.js';
+  var line = 42;
+
+  testInstance._createTrace = [
+    {
+      getFileName: function() { return common.dir.lib + '/foo.js' },
+      getLineNumber: function() { return 23; },
+    },
+    {
+      getFileName: function() { return file },
+      getLineNumber: function() { return line; },
+    }
+  ];
+
+  var err = new Error('oh noes');
+  err.timeout = true;
+
+  testInstance._addTraceInfo(err);
+
+  assert.equal(err.file, file);
+  assert.equal(err.line, line);
+});
+
+test(function addTraceInfoForRegularError() {
+  var err = new Error('oh noes');
+  var errorLine = stackTrace.get()[0].getLineNumber() - 1;
+
+  testInstance._addTraceInfo(err);
+
+  assert.equal(err.file, __filename);
+  assert.equal(err.line, errorLine);
 });

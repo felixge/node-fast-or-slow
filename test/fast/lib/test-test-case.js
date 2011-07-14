@@ -140,18 +140,23 @@ test(function runOneErrorTest() {
 test(function runOneSuccessAndOneErrorTest() {
   var err = new Error('something went wrong');
 
-  var errorTest = {};
+  var errorTest = {my: 'error test'};
   errorTest.run = sinon.stub().yields(err);
   testCase.tests.push(errorTest);
 
-  var successTest = {};
+  var successTest = {my: 'success test'};
   successTest.run = sinon.stub().yields(null);
   testCase.tests.push(successTest);
+
+  var emitTestEnd = sinon.spy();
+  testCase.on('test.end', emitTestEnd);
 
   var runCb = sinon.spy();
   testCase.run(runCb);
 
   assert.ok(runCb.calledWith([err]));
+  assert.ok(emitTestEnd.calledWith(errorTest));
+  assert.ok(emitTestEnd.calledWith(successTest));
 });
 
 test(function duration() {
