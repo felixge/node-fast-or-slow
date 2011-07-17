@@ -65,6 +65,19 @@ test(function runSyncException() {
   assert.strictEqual(runCb.args[0][0], err);
 });
 
+test(function runSyncExceptionInAsyncTest() {
+  var err = new Error('something went wrong');
+  testInstance.fn = function(done) {
+    throw err;
+  };
+
+  var runCb = sinon.spy();
+  testInstance.run(runCb);
+
+  assert.strictEqual(testInstance.error, err);
+  assert.strictEqual(runCb.args[0][0], err);
+});
+
 test(function runAsyncTest() {
   var clock = sinon.useFakeTimers();;
 
