@@ -5,6 +5,9 @@ var EventEmitter = require('events').EventEmitter;
 var stackTrace = require('stack-trace');
 
 var sandboxProcess = new EventEmitter();
+sandboxProcess.nextTick = function(cb) {
+  cb();
+};
 var Sandbox = common.sandbox('test', {
   globals: {
     process: sandboxProcess,
