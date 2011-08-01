@@ -2,6 +2,14 @@
 
 Are your tests fast or slow? An opinionated testing framework.
 
+## Install
+
+This module is still under heavy development, but if you are cool with this:
+
+``` bash
+npm install fast-or-slow
+```
+
 ## Introduction
 
 After lots of trial and error, I have come to realize that there is only one
