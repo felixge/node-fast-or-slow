@@ -57,7 +57,7 @@ test(function addTestWithNameAndFn() {
 
   assert.equal(testCase.tests.length, 1);
   assert.equal(testCase.tests[0].name, testName);
-  assert.equal(testCase.tests[0].fn, testFn);
+  assert.equal(testCase.tests[0].testFn, testFn);
   assert.equal(testCase.tests[0].timeout, null);
 });
 
@@ -68,7 +68,7 @@ test(function addTestWithOptions() {
   testCase.addTest(testName, options, testFn);
 
   assert.equal(testCase.tests[0].name, testName);
-  assert.equal(testCase.tests[0].fn, testFn);
+  assert.equal(testCase.tests[0].testFn, testFn);
   assert.equal(testCase.tests[0].foo, options.foo);
 });
 
@@ -102,6 +102,21 @@ test(function addTestWithTestTimeoutAndTimeoutOption() {
   testCase.addTest(testName, testOptions, testFn);
 
   assert.equal(testCase.tests[0].timeout, 50);
+});
+
+test(function addTestCaseWithBeforeAndAfterFn() {
+  var before = function() {};
+  var after = function() {};
+
+  testCase.before(before);
+  testCase.after(after);
+
+  var testName = 'my test';
+  var testFn = function() {};
+  testCase.addTest(testName, testFn);
+
+  assert.strictEqual(testCase.tests[0].beforeFn, before);
+  assert.strictEqual(testCase.tests[0].afterFn, after);
 });
 
 test(function runNoTestCases() {

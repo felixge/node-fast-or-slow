@@ -25,7 +25,7 @@ test(function addOneTest() {
   var testInstance = Test.create(testName, testFn);
 
   assert.strictEqual(testInstance.name, testName);
-  assert.strictEqual(testInstance.fn, testFn);
+  assert.strictEqual(testInstance.testFn, testFn);
   assert.ok(testInstance._createTrace);
 });
 
@@ -40,12 +40,12 @@ test(function addTestWithOptions() {
 });
 
 test(function runEmptyTest() {
-  testInstance.fn = sinon.spy();
+  testInstance.testFn = sinon.spy();
 
   var runCb = sinon.spy();
   testInstance.run(runCb);
 
-  assert.ok(testInstance.fn.called);
+  assert.ok(testInstance.testFn.called);
   var doneErr = runCb.args[0][0];
   assert.ok(!doneErr);
 
@@ -53,21 +53,21 @@ test(function runEmptyTest() {
 });
 
 test(function runSyncException() {
-  testInstance.fn = sinon.stub();
+  testInstance.testFn = sinon.stub();
   var err = new Error('something went wrong');
-  testInstance.fn.throws(err);
+  testInstance.testFn.throws(err);
 
   var runCb = sinon.spy();
   testInstance.run(runCb);
 
-  assert.ok(testInstance.fn.called);
+  assert.ok(testInstance.testFn.called);
   assert.strictEqual(testInstance.error, err);
   assert.strictEqual(runCb.args[0][0], err);
 });
 
 test(function runSyncExceptionInAsyncTest() {
   var err = new Error('something went wrong');
-  testInstance.fn = function(done) {
+  testInstance.testFn = function(done) {
     throw err;
   };
 
@@ -81,7 +81,7 @@ test(function runSyncExceptionInAsyncTest() {
 test(function runAsyncTest() {
   var clock = sinon.useFakeTimers();;
 
-  testInstance.fn = function(done) {
+  testInstance.testFn = function(done) {
     setTimeout(function() {
       done();
     }, 100);
@@ -100,7 +100,7 @@ test(function runAsyncTest() {
 });
 
 test(function runAsyncTestDoneTwice() {
-  testInstance.fn = function(done) {
+  testInstance.testFn = function(done) {
     done();
     done();
   };
@@ -115,7 +115,7 @@ test(function runAsyncTestError() {
   var clock = sinon.useFakeTimers();;
 
   var err = new Error('ouch');
-  testInstance.fn = function(done) {
+  testInstance.testFn = function(done) {
     setTimeout(function() {
       done(err);
     }, 100);
@@ -131,7 +131,7 @@ test(function runAsyncTestError() {
 });
 
 test(function runAsyncTestException() {
-  testInstance.fn = function(done) {
+  testInstance.testFn = function(done) {
   };
 
   var runCb = sinon.spy();
@@ -146,12 +146,28 @@ test(function runAsyncTestException() {
   assert.strictEqual(listeners.length, 0);
 });
 
+test(function runBeforeAndAfterSync() {
+  //sinon.spy(testInstance, 'beforeFn');
+  //sinon.spy(testInstance, 'afterFn');
+
+  //testInstance.testFn = function() {
+    //assert.ok(testInstance.beforeFn.called);
+  //};
+
+  //var runCb = sinon.spy();
+  //testInstance.run(runCb);
+
+  //assert.equal(runCb.args[0][0], null);
+  //assert.ok(runCb.called);
+  //assert.ok(testInstance.afterFn.called);
+});
+
 test(function asyncTimeout() {
   var clock = sinon.useFakeTimers();;
 
   Sandbox.globals.setTimeout = setTimeout;
   Sandbox.globals.Date = Date;
-  testInstance.fn = function(done) {};
+  testInstance.testFn = function(done) {};
   var timeout = testInstance.timeout = 100;
 
   var runCb = sinon.spy();
@@ -172,7 +188,7 @@ test(function asyncTimeout() {
 });
 
 test(function syncTimeout() {
-  testInstance.fn = function() {
+  testInstance.testFn = function() {
   };
   var timeout = testInstance.timeout = -1;
 
@@ -191,7 +207,7 @@ test(function alterTimeout() {
   Sandbox.globals.clearTimeout = clearTimeout;
   Sandbox.globals.Date = Date;
 
-  testInstance.fn = function(done) {};
+  testInstance.testFn = function(done) {};
   testInstance.timeout = 100;
 
   var runCb = sinon.spy();
@@ -218,7 +234,7 @@ test(function clearsAysyncTimeoutOnSuccess() {
   Sandbox.globals.setTimeout = sinon.stub().returns(timeoutId);
   Sandbox.globals.clearTimeout = sinon.stub();
 
-  testInstance.fn = function(done) {
+  testInstance.testFn = function(done) {
     done();
   };
   testInstance.timeout = 100;
@@ -238,7 +254,7 @@ test(function cancelTimeout() {
   Sandbox.globals.setTimeout = setTimeout;
   Sandbox.globals.clearTimeout = clearTimeout;
   Sandbox.globals.Date = Date;
-  testInstance.fn = function(done) {};
+  testInstance.testFn = function(done) {};
   testInstance.timeout = 100;
 
   var runCb = sinon.spy();
