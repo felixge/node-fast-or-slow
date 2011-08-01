@@ -53,14 +53,14 @@ test(function runEmptyTest() {
 });
 
 test(function runSyncException() {
-  testInstance.testFn = sinon.stub();
   var err = new Error('something went wrong');
-  testInstance.testFn.throws(err);
+  testInstance.testFn = function() {
+    sandboxProcess.emit('uncaughtException', err);
+  };
 
   var runCb = sinon.spy();
   testInstance.run(runCb);
 
-  assert.ok(testInstance.testFn.called);
   assert.strictEqual(testInstance.error, err);
   assert.strictEqual(runCb.args[0][0], err);
 });
@@ -68,7 +68,7 @@ test(function runSyncException() {
 test(function runSyncExceptionInAsyncTest() {
   var err = new Error('something went wrong');
   testInstance.testFn = function(done) {
-    throw err;
+    sandboxProcess.emit('uncaughtException', err);
   };
 
   var runCb = sinon.spy();
@@ -216,7 +216,7 @@ test(function alterTimeout() {
   clock.tick(99);
   assert.strictEqual(runCb.called, false);
   testInstance.setTimeout(101);
-  clock.tick(1);
+  clock.tick(100);
   assert.strictEqual(runCb.called, false);
   clock.tick(1);
   assert.strictEqual(runCb.called, true);
@@ -265,7 +265,7 @@ test(function cancelTimeout() {
   clock.tick(100);
   assert.ok(!testInstance._ended);
 
-  testInstance.doneCb()();
+  testInstance.end();
   assert.ok(testInstance._ended);
   var doneErr = runCb.args[0][0];
   assert.ok(!doneErr);
@@ -279,19 +279,6 @@ test(function cancelTimeout() {
 //test(function getLine() {
 
 //});
-
-test(function getFile() {
-  var expectedCallSite = {getFileName: sinon.stub().returns(common.dir.root + '/test/super.js')};
-  testInstance._trace = [
-    {getFileName: sinon.stub().returns(common.dir.lib + '/foo.js')},
-    {getFileName: sinon.stub().returns(common.dir.lib + '/me.js')},
-    expectedCallSite,
-    {getFileName: sinon.stub().returns('you went too far!')},
-  ];
-
-  var callSite = testInstance.getCallSite();
-  assert.strictEqual(callSite, expectedCallSite);
-});
 
 test(function addTraceInfoForTimeout() {
   var file = __dirname + '/imaginary.js';
@@ -311,7 +298,7 @@ test(function addTraceInfoForTimeout() {
   var err = new Error('oh noes');
   err.timeout = true;
 
-  testInstance._addTraceInfo(err);
+  testInstance._addErrorLocation(err);
 
   assert.equal(err.file, file);
   assert.equal(err.line, line);
@@ -321,7 +308,7 @@ test(function addTraceInfoForRegularError() {
   var err = new Error('oh noes');
   var errorLine = stackTrace.get()[0].getLineNumber() - 1;
 
-  testInstance._addTraceInfo(err);
+  testInstance._addErrorLocation(err);
 
   assert.equal(err.file, __filename);
   assert.equal(err.line, errorLine);
