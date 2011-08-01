@@ -18,8 +18,8 @@ them very quickly to have short feedback loops.
 **Fast tests:**
 
 * Finish in < 10ms / test
-* Pass without a network, database, or any other software not installed on
-  every machine used by your team.
+* Pass without a network, database, or any software not installed on every
+  machine used by your team.
 
 **Slow tests:**
 
