@@ -13,13 +13,13 @@ or doing end to end tests involving all parts of your application?
 The important thing is that you write tons of tests, and that you can execute
 them very quickly to have short feedback loops.
 
-## Rules of the game
+## Rules
 
 **Fast tests:**
 
 * Finish in < 10ms / test
-* Pass without a network, database, or any other software not installed on a
-  plain \*nix machine.
+* Pass without a network, database, or any other software not installed on
+  every machine used by your team.
 
 **Slow tests:**
 
