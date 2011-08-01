@@ -52,7 +52,7 @@ test('V8 is fast', function() {
 
 Running this test is as simple as:
 
-``` bash
+```
 $ node test-example.js
 ! Slow tests are bad (line 9 in test/fast/example/test-example.js)
 
@@ -65,7 +65,7 @@ $ echo $?
 ```
 Also, did you notice the awesome line number indications? Try this:
 
-``` bash
+```
 $ node test-example.js | grep !
 ! Slow tests are bad (line 9 in test/fast/example/test-example.js)
 ```
