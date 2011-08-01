@@ -25,7 +25,7 @@ them very quickly to have short feedback loops.
 
 **Fast tests:**
 
-* Finish in < 10ms / test
+* Finish in < 100 ms / test
 * Pass without a network, database, or any software not installed on every
   machine used by your team.
 
