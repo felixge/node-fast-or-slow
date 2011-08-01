@@ -50,6 +50,8 @@ test('V8 is fast', function() {
 });
 ```
 
+### Running a test file
+
 Running this test is as simple as:
 
 ```
@@ -71,3 +73,24 @@ $ node test-example.js | grep !
 ```
 
 Seriously, why doesn't every testing framework work this way?
+
+### Before / After
+
+The before / after functions are executed for every test:
+
+``` javascript
+var test = require('fast-or-slow').fastTestCase();
+var mysql = require('mysql');
+
+test.before(function() {
+  this.client = mysql.createClient();
+});
+
+test.after(function() {
+  this.client.destroy();
+});
+
+test('Some query', function(done) {
+  this.client.query('SELECT ...');
+});
+```
