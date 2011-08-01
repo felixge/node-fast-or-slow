@@ -147,19 +147,34 @@ test(function runAsyncTestException() {
 });
 
 test(function runBeforeAndAfterSync() {
-  //sinon.spy(testInstance, 'beforeFn');
-  //sinon.spy(testInstance, 'afterFn');
+  sinon.spy(testInstance, 'beforeFn');
+  sinon.spy(testInstance, 'afterFn');
 
-  //testInstance.testFn = function() {
-    //assert.ok(testInstance.beforeFn.called);
-  //};
+  testInstance.testFn = function() {
+    assert.ok(testInstance.beforeFn.called);
+  };
 
-  //var runCb = sinon.spy();
-  //testInstance.run(runCb);
+  var runCb = sinon.spy();
+  testInstance.run(runCb);
 
-  //assert.equal(runCb.args[0][0], null);
-  //assert.ok(runCb.called);
-  //assert.ok(testInstance.afterFn.called);
+  assert.equal(runCb.args[0][0], null);
+  assert.ok(runCb.called);
+  assert.ok(testInstance.afterFn.called);
+});
+
+test(function afterExecutesEvenOnTestError() {
+  sinon.spy(testInstance, 'afterFn');
+
+  var err = new Error('oh noes');
+  testInstance.testFn = function() {
+    sandboxProcess.emit('uncaughtException', err);
+  };
+
+  var runCb = sinon.spy();
+  testInstance.run(runCb);
+
+  assert.strictEqual(runCb.args[0][0], err);
+  assert.ok(testInstance.afterFn.called);
 });
 
 test(function asyncTimeout() {
