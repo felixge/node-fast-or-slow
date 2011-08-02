@@ -9,7 +9,7 @@ test('The laws of JavaScript apply', function() {
 test('Slow tests are bad', function(done) {
   setTimeout(function() {
     done();
-  }, 20);
+  }, 110);
 });
 
 test('V8 is fast', function() {
