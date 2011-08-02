@@ -197,7 +197,7 @@ test(function asyncTimeout() {
   var doneErr = runCb.args[0][0];
   assert.ok(doneErr.timeout);
   assert.ok(doneErr.message.match(/timeout/i));
-  assert.ok(doneErr.message.indexOf('than ' + timeout + 'ms') > -1);
+  assert.ok(doneErr.message.indexOf('exceeded ' + timeout + 'ms') > -1);
   assert.ok(doneErr.message.indexOf('took 100ms') > -1);
 
   clock.restore()
@@ -216,7 +216,7 @@ test(function syncTimeout() {
   assert.strictEqual(runCb.called, true);
   var doneErr = runCb.args[0][0];
   assert.ok(doneErr.message.match(/timeout/i));
-  assert.ok(doneErr.message.indexOf('than ' + timeout + 'ms') > -1);
+  assert.ok(doneErr.message.indexOf('exceeded ' + timeout + 'ms') > -1);
 });
 
 test(function alterTimeout() {
