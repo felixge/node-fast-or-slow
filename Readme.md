@@ -31,7 +31,7 @@ them very quickly to have short feedback loops.
 
 **Slow tests:**
 
-* Finish in < 30 seconds per test
+* Finish in < 1 seconds per test (can be tweaked)
 * Can require as much additional software / setup as you want
 
 ## Example
