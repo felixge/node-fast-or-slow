@@ -46,7 +46,7 @@ test('The laws of JavaScript apply', function() {
 test('Slow tests are bad', function(done) {
   setTimeout(function() {
     done();
-  }, 20);
+  }, 150);
 });
 
 test('V8 is fast', function() {
@@ -66,10 +66,10 @@ Running this test is as simple as:
 $ node test-example.js
 ! Slow tests are bad (line 9 in test/fast/example/test-example.js)
 
-Error: Timeout: test ran longer than 10ms (took 11ms)
-    at Test.timeoutError (/Users/felix/code/node-fast-or-slow/lib/test.js:136:13)
-    at Object.doneCb (/Users/felix/code/node-fast-or-slow/lib/test.js:74:50)
-    at Timer.callback (timers.js:83:39)
+  Error: Timeout: test ran longer than 100ms (took 102ms)
+      at Test.timeoutError (/Users/felix/code/node-fast-or-slow/lib/test.js:136:13)
+      at Object.doneCb (/Users/felix/code/node-fast-or-slow/lib/test.js:74:50)
+      at Timer.callback (timers.js:83:39)
 $ echo $?
 1
 ```
