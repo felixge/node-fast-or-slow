@@ -294,10 +294,6 @@ test(function cancelTimeout() {
   Sandbox.globals.Date = Date;
 });
 
-//test(function getLine() {
-
-//});
-
 test(function addTraceInfoForTimeout() {
   var file = __dirname + '/imaginary.js';
   var line = 42;
@@ -330,4 +326,12 @@ test(function addTraceInfoForRegularError() {
 
   assert.equal(err.file, __filename);
   assert.equal(err.line, errorLine);
+});
+
+test(function selected() {
+  testInstance.name = 'foo';
+  assert.equal(testInstance.selected(), false);
+
+  testInstance.name = '!foo';
+  assert.equal(testInstance.selected(), true);
 });

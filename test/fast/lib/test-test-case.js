@@ -132,6 +132,7 @@ test(function runNoTestCases() {
 test(function runOneSuccessTest() {
   var testInstance = {};
   testInstance.run = sinon.stub().yields(null);
+  sinon.stub(testCase, 'selectedCount');
   testCase.tests.push(testInstance);
 
   var runCb = sinon.spy();
@@ -145,6 +146,7 @@ test(function runOneErrorTest() {
   var testInstance = {};
   testInstance.run = sinon.stub().yields(err);
   testCase.tests.push(testInstance);
+  sinon.stub(testCase, 'selectedCount');
 
   var runCb = sinon.spy();
   testCase.run(runCb);
@@ -154,6 +156,7 @@ test(function runOneErrorTest() {
 
 test(function runOneSuccessAndOneErrorTest() {
   var err = new Error('something went wrong');
+  sinon.stub(testCase, 'selectedCount');
 
   var errorTest = {my: 'error test'};
   errorTest.run = sinon.stub().yields(err);
@@ -172,6 +175,38 @@ test(function runOneSuccessAndOneErrorTest() {
   assert.ok(runCb.calledWith([err]));
   assert.ok(emitTestEnd.calledWith(errorTest));
   assert.ok(emitTestEnd.calledWith(successTest));
+});
+
+test(function runWithSelected() {
+  testCase.tests = [
+    {selected: sinon.stub().returns(false), run: sinon.stub().yields(null)},
+    {selected: sinon.stub().returns(true), run: sinon.stub().yields(null)},
+  ];
+
+  var runCb = sinon.spy();
+  testCase.run(runCb);
+
+  assert.ok(runCb.calledWith(null));
+  assert.equal(testCase.tests[0].run.called, false);
+  assert.equal(testCase.tests[1].run.called, true);
+
+  var stats = testCase.stats();
+  assert.equal(stats.index, 2);
+  assert.equal(stats.pass, 1);
+  assert.equal(stats.skip, 1);
+  assert.equal(stats.fail, 0);
+  assert.equal(stats.total, 2);
+});
+
+test(function selectedCount() {
+  testCase.tests = [
+    {selected: sinon.stub().returns(false)},
+    {selected: sinon.stub().returns(false)},
+  ];
+  assert.equal(testCase.selectedCount(), 0);
+
+  testCase.tests.push({selected: sinon.stub().returns(true)});
+  assert.equal(testCase.selectedCount(), 1);
 });
 
 test(function duration() {
@@ -195,7 +230,7 @@ test(function statsNumbers() {
   var stats = testCase.stats();
   assert.strictEqual(stats.pass, 1);
   assert.strictEqual(stats.fail, 3);
-  assert.strictEqual(stats.executed, testCase.index);
+  assert.strictEqual(stats.index, testCase.index);
   assert.strictEqual(stats.total, 5);
 });
 
