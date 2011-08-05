@@ -20,6 +20,7 @@
     "sandboxed-module": "0.1.0",
     "stack-trace": "0.0.6",
     "hashish": "0.0.3",
+    "inflect": "0.1.0",
     "far": "0.0.3"
   },
   "devDependencies": {}
