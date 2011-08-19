@@ -1,5 +1,5 @@
 var common = require('../common');
-var test = require(common.dir.lib + '/fast_or_slow').fastTestCase();
+var test = require(common.dir.lib + '/fast_or_slow').fast();
 var assert = require('assert');
 
 test('The laws of JavaScript apply', function() {

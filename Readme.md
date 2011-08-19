@@ -37,7 +37,7 @@ them very quickly to have short feedback loops.
 ## Example
 
 ``` javascript
-var test = require('fast-or-slow').fastTestCase();
+var test = require('fast-or-slow').fast();
 
 test('The laws of JavaScript apply', function() {
   test.ok(true);
@@ -87,7 +87,7 @@ Seriously, why doesn't every testing framework work this way?
 The before / after functions are executed for every test:
 
 ``` javascript
-var test = require('fast-or-slow').fastTestCase();
+var test = require('fast-or-slow').fast();
 var mysql = require('mysql');
 
 test.before(function() {

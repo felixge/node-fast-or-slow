@@ -36,7 +36,7 @@ test(function fastTestCase() {
   SandboxReporter.create = sinon.stub().returns(sandboxReporter);
   sandboxReporter.watch = sinon.spy();
 
-  var sugarAddTest = FastOrSlow.fastTestCase();
+  var sugarAddTest = FastOrSlow.fast();
   assert.strictEqual(sugarAddTest, sandboxSugarAddTest);
   assert.ok(sandboxReporter.watch.calledWith(sandboxTestCase));
 
