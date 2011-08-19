@@ -17,7 +17,7 @@
   },
   "dependencies": {
     "sinon": "https://github.com/cjohansen/Sinon.JS/tarball/90b4af9bbf0273bfc8a54da998272cfd83f00407",
-    "sandboxed-module": "0.1.0",
+    "sandboxed-module": "0.1.1",
     "stack-trace": "0.0.6",
     "hashish": "0.0.3",
     "inflect": "0.1.0"
