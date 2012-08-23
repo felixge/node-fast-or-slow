@@ -1,3 +1,4 @@
+[![build status](https://secure.travis-ci.org/felixge/node-fast-or-slow.png)](http://travis-ci.org/felixge/node-fast-or-slow)
 # fast-or-slow
 
 Are your tests fast or slow? An opinionated testing framework.
